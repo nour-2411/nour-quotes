@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>موقع تسجيل دخول</title>
+  <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: "Tahoma", sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh;
+    }
+    .container {
+      width: 100%; max-width: 500px;
+      background: rgba(255,255,255,0.05);
+      padding: 30px; border-radius: 20px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.7);
+      backdrop-filter: blur(10px);
+    }
+    h2 { text-align: center; margin-bottom: 20px; }
+    input[type="text"], input[type="password"], input[type="email"] {
+      width: 100%; padding: 12px; margin: 10px 0;
+      border: none; border-radius: 10px;
+      outline: none;
+    }
+    label { font-size: 14px; }
+    button {
+      width: 100%; padding: 12px;
+      background: #00b894; border: none;
+      border-radius: 10px; cursor: pointer;
+      font-weight: bold; color: #fff;
+      transition: 0.3s;
+    }
+    button:hover { background: #019170; }
+    .hidden { display: none; }
+    .bio-page {
+      width: 100%; padding: 20px;
+    }
+    .bio-page h3 { text-align: center; margin-bottom: 20px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+    }
+    .card {
+      background: rgba(255,255,255,0.07);
+      padding: 15px;
+      border-radius: 15px;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+    .card:hover { transform: scale(1.05); }
+    .contact {
+      margin-top: 30px;
+      text-align: center;
+    }
+    .contact button {
+      width: auto; margin: 10px;
+      padding: 10px 20px;
+      border-radius: 8px;
+    }
+    .whatsapp { background: #25D366; }
+    .call { background: #0984e3; }
+  </style>
+</head>
+<body>
+  <!-- صفحة تسجيل الدخول -->
+  <div class="container" id="loginPage">
+    <h2>تسجيل الدخول</h2>
+    <input type="text" id="loginUser" placeholder="اسم المستخدم أو البريد">
+    <input type="password" id="loginPass" placeholder="كلمة السر">
+    <div>
+      <input type="checkbox" id="rememberMe">
+      <label for="rememberMe">تذكرني</label>
+    </div>
+    <button onclick="login()">دخول</button>
+    <p style="margin-top:10px; text-align:center;">
+      ليس لديك حساب؟ <a href="#" onclick="showRegister()">إنشاء حساب</a>
+    </p>
+  </div>
+
+  <!-- صفحة إنشاء حساب -->
+  <div class="container hidden" id="registerPage">
+    <h2>إنشاء حساب</h2>
+    <input type="text" id="regUser" placeholder="اسم المستخدم">
+    <input type="email" id="regEmail" placeholder="البريد الإلكتروني">
+    <input type="password" id="regPass" placeholder="كلمة السر">
+    <button onclick="register()">تسجيل</button>
+    <p style="margin-top:10px; text-align:center;">
+      لديك حساب بالفعل؟ <a href="#" onclick="showLogin()">تسجيل الدخول</a>
+    </p>
+  </div>
+
+  <!-- الصفحة الرئيسية -->
+  <div class="bio-page hidden" id="homePage">
+    <h3>🌟 اقتباسات ملهمة 🌟</h3>
+    <div class="grid" id="quotesContainer"></div>
+    <div class="contact">
+      <h3>📞 تواصل معنا</h3>
+      <button class="whatsapp" onclick="window.open('https://wa.me/201270090577','_blank')">واتساب</button>
+      <button class="call" onclick="alert('📞 رقم الدعم الفني: 01280348592')">مكالمات</button>
+    </div>
+  </div>
+
+  <script>
+    const quotes = [
+      "🔺✨ الحياة رحلة فاستمتع بكل لحظة — Life is a journey, enjoy every moment ✨🔻",
+      "🔹🌟 لا تنتظر الفرصة بل اصنعها — Don’t wait for opportunity, create it 🌟🔸",
+      "🌀💪 النجاح يبدأ بخطوة — Success begins with a step 💪🔆",
+      "🌙😊 ابتسم فالعالم يحتاج ابتسامتك — Smile, the world needs your smile 😊🌙",
+      "💎🏔️ اجعل طموحك أعلى من الجبال — Make your ambition higher than the mountains 🏔️💎",
+      "🌈💖 السعادة قرار وليست انتظار — Happiness is a decision, not a wait 💖🌈",
+      "🔥💪 ثق بنفسك فأنت قادر — Believe in yourself, you are capable 💪🔥",
+      "🌌🚀 لا تنظر خلفك، المستقبل أمامك — Don’t look back, the future is ahead 🚀🌌",
+      "🌟📈 التفاؤل هو بداية النجاح — Optimism is the start of success 📈🌟",
+      "⚡📚 لا تتوقف عند الفشل، تعلم منه — Don’t stop at failure, learn from it 📚⚡",
+      "🌍⌛ استمر فالأشياء العظيمة تحتاج وقتًا — Great things take time ⌛🌍",
+      "🌞🌱 كل يوم بداية جديدة — Every day is a new beginning 🌱🌞",
+      "💧🕊️ اجعل قلبك نقيًا وروحك صافية — Keep your heart pure 🕊️💧",
+      "🔥🌹 الأمل لا يموت — Hope never dies 🌹🔥",
+      "🚪✨ لا شيء مستحيل مع الإرادة — Nothing is impossible with willpower ✨🚪",
+      "💖🙌 أحب نفسك لتستطيع حب الآخرين — Love yourself to love others 🙌💖",
+      "🕒🏆 النجاح يحتاج صبر وعمل — Success requires patience and work 🏆🕒",
+      "📜🌠 تعلم من الأمس، عش اليوم، احلم للغد — Learn, live, dream 🌠📜",
+      "💪💫 القوة ليست في الجسد بل في الروح — Strength is in the soul 💫💪",
+      "🌺📝 اجعل كلامك طيبًا دائمًا — Always make your words kind 📝🌺",
+      "🎁😊 العطاء سر السعادة — Giving is the secret of happiness 😊🎁",
+      "⏳📖 استغل وقتك فيما ينفعك — Use your time wisely 📖⏳",
+      "🔄🌟 التغيير يبدأ منك — Change begins with you 🌟🔄",
+      "💡⚔️ العلم سلاحك في الحياة — Knowledge is your weapon ⚔️💡",
+      "🔥🎶 لا تفقد شغفك مهما كانت الظروف — Never lose your passion 🎶🔥",
+      "🤝💎 الأصدقاء الحقيقيون كنز — True friends are a treasure 💎🤝",
+      "🎯🌄 اجعل حلمك حقيقة — Make your dream a reality 🌄🎯",
+      "🔑🚪 العزيمة تفتح كل الأبواب — Determination opens all doors 🚪🔑",
+      "🌅🌻 لا تيأس، فالغد أجمل — Don’t despair, tomorrow is brighter 🌻🌅",
+      "🛠️📣 اجعل عملك يتحدث عنك — Let your work speak 📣🛠️",
+      "🌾🤲 التواضع يرفع صاحبه — Humility elevates its owner 🤲🌾",
+      "🤫🏅 اعمل بصمت ودع النجاح يصنع الضجيج — Work in silence, let success make the noise 🏅🤫",
+      "🌈💭 لا تقارن نفسك بغيرك، كن أنت — Don’t compare, be yourself 💭🌈",
+      "⏰🔥 ابدأ الآن ولا تؤجل — Start now, don’t delay 🔥⏰",
+      "🌿💚 اجعل الخير عادة — Make goodness a habit 💚🌿",
+      "🚀✨ الطموح لا ينتهي — Ambition never ends ✨🚀",
+      "🪞🌟 كن أنت التغيير الذي تريد أن تراه — Be the change you want 🌟🪞",
+      "🚫💔 تعلم أن تقول لا لما يؤذيك — Learn to say no 💔🚫",
+      "📆📈 اجعل كل يوم أفضل من الذي قبله — Make every day better 📈📆",
+      "🕊️🔒 الثقة بالله قوة لا تنكسر — Trust in God is unbreakable 🔒🕊️",
+      "🌠💖 لا تستسلم، فالمعجزات تحدث — Don’t give up, miracles happen 💖🌠",
+      "🌸😊 ابتسم للحياة تبتسم لك — Smile at life, and it will smile back 😊🌸",
+      "🌱🔥 الفشل بداية جديدة للنجاح — Failure is a new beginning 🔥🌱",
+      "🍃🎉 السعادة في التفاصيل الصغيرة — Happiness lies in small details 🎉🍃",
+      "🙏🌞 تعلم كيف تكون ممتنًا — Learn how to be grateful 🌞🙏",
+      "💌❤️ اجعل قلبك عامرًا بالحب — Fill your heart with love ❤️💌",
+      "💡🌟 لا تفقد إيمانك بنفسك — Never lose faith in yourself 🌟💡",
+      "🏡👨‍👩‍👧‍👦 اجعل وقتك مع العائلة مقدسًا — Family time is sacred 👨‍👩‍👧‍👦🏡",
+      "🔑💪 الإصرار مفتاح النجاح — Determination is the key to success 💪🔑",
+      "🌏🤝 الحياة أجمل عندما نشاركها — Life is more beautiful when shared 🤝🌏"
+    ];
+
+    // عرض العبارات
+    const quotesContainer = document.getElementById("quotesContainer");
+    quotes.forEach(q => {
+      let div = document.createElement("div");
+      div.className = "card";
+      div.textContent = q;
+      quotesContainer.appendChild(div);
+    });
+
+    function showRegister() {
+      document.getElementById("loginPage").classList.add("hidden");
+      document.getElementById("registerPage").classList.remove("hidden");
+    }
+    function showLogin() {
+      document.getElementById("registerPage").classList.add("hidden");
+      document.getElementById("loginPage").classList.remove("hidden");
+    }
+    function register() {
+      const user = document.getElementById("regUser").value;
+      const email = document.getElementById("regEmail").value;
+      const pass = document.getElementById("regPass").value;
+      if(user && email && pass){
+        localStorage.setItem("username", user);
+        localStorage.setItem("email", email);
+        localStorage.setItem("password", pass);
+        alert("تم إنشاء الحساب بنجاح ✅");
+        showLogin();
+      } else {
+        alert("من فضلك املأ جميع الحقول ❗");
+      }
+    }
+    function login() {
+      const user = document.getElementById("loginUser").value;
+      const pass = document.getElementById("loginPass").value;
+      const savedUser = localStorage.getItem("username");
+      const savedEmail = localStorage.getItem("email");
+      const savedPass = localStorage.getItem("password");
+      const remember = document.getElementById("rememberMe").checked;
+
+      if((user === savedUser || user === savedEmail) && pass === savedPass){
+        if(remember){
+          localStorage.setItem("rememberMe", "true");
+        } else {
+          localStorage.removeItem("rememberMe");
+        }
+        document.getElementById("loginPage").classList.add("hidden");
+        document.getElementById("homePage").classList.remove("hidden");
+      } else {
+        alert("❌ بيانات الدخول غير صحيحة");
+      }
+    }
+
+    // التذكر التلقائي
+    window.onload = () => {
+      if(localStorage.getItem("rememberMe") === "true"){
+        document.getElementById("loginPage").classList.add("hidden");
+        document.getElementById("homePage").classList.remove("hidden");
+      }
+    }
+  </script>
+</body>
+</html>
